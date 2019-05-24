@@ -1,0 +1,66 @@
+Notes:
+1. Increase swapspace if you get gcc internal error
+https://askubuntu.com/questions/178712/how-to-increase-swap-space
+2.compile tensorflow without bazel build system
+https://github.com/alokprasad/tensorflow_cc
+
+using Bazel build
+=================
+https://www.tensorflow.org/install/source
+https://docs.bazel.build/versions/master/install-ubuntu.html
+https://github.com/bazelbuild/bazel/releases/tag/0.21.0
+https://github.com/bazelbuild/bazel/issues/4996
+
+
+
+=====================WORKSPACE Modification=============
+workspace(name = "org_tensorflow")
+
+#local_repository(
+#    name = "bazel_tools",
+#    path = "/usr/local/tensorflow-1.13.1/bazel-tools",
+#)
+
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+#load("@bazel_tools//tools/build_defs/repo:http.bzl", "closure_repositories")
+
+local_repository(
+    name = "io_bazel_rules_closure",
+    path = "/usr/local/tensorflow-1.13.1/closure/rules",
+)
+
+#http_archive(
+#    name = "io_bazel_rules_closure",
+#    sha256 = "a38539c5b5c358548e75b44141b4ab637bba7c4dc02b46b1f62a96d6433f56ae",
+#    strip_prefix = "rules_closure-dbb96841cc0a5fb2664c37822803b06dab20c7d1",
+#    urls = [
+#        
+
+"https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06
+
+dab20c7d1.tar.gz",
+#        
+
+"https://github.com/bazelbuild/rules_closure/archive/dbb96841cc0a5fb2664c37822803b06dab20c7d1.tar.gz",  
+
+# 2018-04-13
+#    ],
+#)
+
+load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
+
+closure_repositories()
+
+
+
+
+load("//third_party/toolchains/preconfig/generate:archives.bzl",
+     "bazel_toolchains_archive")
+
+#bazel_toolchains_archive()
+local_repository(
+    name = "bazel_toolchains",
+    path = "/usr/local/tensorflow-1.13.1/bazel-toolchains",
+)
+
