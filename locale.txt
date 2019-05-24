@@ -1,0 +1,194 @@
+## LOCALE
+
+UTF8
+http://grigory.info/UTF8Strings.Documentation.html
+
+Gettext
+http://www.labri.fr/perso/fleury/posts/programming/a-quick-gettext-tutorial.html
+
+GLIB
+https://developer.gnome.org/glib/stable/glib-Unicode-Manipulation.html#g-utf8-strlen
+
+
+
+I think we can use Tinyutf8 or glib or gettext
+
+https://developer.gnome.org/glib/stable/glib-Unicode-Manipulation.html#g-utf8-strlen
+https://github.com/DuffsDevice/tinyutf8
+
+
+https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/
+
+
+Java natively uses utf16 encoding
+
+
+I Liked the Gettext 
+
+here text are stored as msgid -> which can be english statement 
+and msgstr - > which is language specific string.
+https://github.com/git/git/blob/master/po/de.po
+
+We can keep multiple language po files
+e.g de.po ( german) .
+
+
+
+The main ones are PO (Portable Object) and MO (Machine Object) files, the first being a list of readable “translated objects” and the second being the corresponding binary (to be interpreted by Gettext when doing localization). There’s also a POT (PO Template) file, that simply contains all existing keys from your source files, and can be used as a guide to generate and update all PO files
+
+Locales/de/LC_MESSAGES/response.po|.mo
+Locales/response.pot
+
+==================
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+
+msgid "We're now translating some strings"
+msgstr "Nós estamos traduzindo algumas strings agora"
+
+msgid "Hello %1$s! Your last visit was on %2$s"
+msgstr "Olá %1$s! Sua última visita foi em %2$s"
+
+msgid "Only one unread message"
+msgid_plural "%d unread messages"
+msgstr[0] "Só uma mensagem não lida"
+msgstr[1] "%d mensagens não lidas"
+=============
+
+xgettext -d hello -s -o hello.pot b.c --> generate pot file
+msginit -l es -o hello.po -i hello.pot --> pot to po
+msgfmt -c -v -o hello.mo hello.pot --> po to mo
+install hello.mo /usr/share/locale/es/LC_MESSAGES
+
+export LANG=es
+
+
+setlocale() will return false if your system does not support that locale. You can see which locales your system supports by examining the output of locale -a
+
+
+==
+
+$lang = "en";
+putenv("LANG=en_DK.utf8"); 
+setlocale(LC_ALL, "en_DK.utf8");
+bindtextdomain($lang, realpath("./locale")); 
+bind_textdomain_codeset($lang, "utf-8"); 
+textdomain($lang);
+The file location of the .mo files are like this:
+
+./locale/en_DK.utf-8/LC_MESSAGES/en.mo
+
+
+
+locale -a
+add the locales you want (for example ru):
+
+sudo locale-gen ru_RU
+sudo locale-gen ru_RU.UTF-8
+run this update comand
+
+sudo update-locale 
+
+
+Unicode->Die Mediendatenbank bietet Ihnen Fotos und Grafiken in Druckqualität sowie Filme und Animationen zu DESY und seinen Forschungsbereichen
+UTF8->
+0x44 0x69 0x65 0x20 0x4D 0x65 0x64 0x69 0x65 0x6E 0x64 0x61 0x74 0x65 0x6E 0x62 0x61 0x6E 0x6B 0x20 0x62 0x69 0x65 0x74 0x65 0x74 0x20 0x49 0x68 0x6E 0x65 0x6E 0x20 0x46 0x6F 0x74 0x6F 0x73 0x20 0x75 0x6E 0x64 0x20 0x47 0x72 0x61 0x66 0x69 0x6B 0x65 0x6E 0x20 0x69 0x6E 0x20 0x44 0x72 0x75 0x63 0x6B 0x71 0x75 0x61 0x6C 0x69 0x74 0xC3 0xA4 0x74 0x20 0x73 0x6F 0x77 0x69 0x65 0x20 0x46 0x69 0x6C 0x6D 0x65 0x20 0x75 0x6E 0x64 0x20 0x41 0x6E 0x69 0x6D 0x61 0x74 0x69 0x6F 0x6E 0x65 0x6E 0x20 0x7A 0x75 0x20 0x44 0x45 0x53 0x59 0x20 0x75 0x6E 0x64 0x20 0x73 0x65 0x69 0x6E 0x65 0x6E 0x20 0x46 0x6F 0x72 0x73 0x63 0x68 0x75 0x6E 0x67 0x73 0x62 0x65 0x72 0x65 0x69 0x63 0x68 0x65 0x6E
+
+
+\x44\x69\x65\x20\x4D\x65\x64\x69\x65\x6E\x64\x61\x74\x65\x6E\x62\x61\x6E\x6B\x20\x62\x69\x65\x74\x65\x74\x20\x49\x68\x6E\x65\x6E\x20\x46\x6F\x74\x6F\x73\x20\x75\x6E\x64\x20\x47\x72\x61\x66\x69\x6B\x65\x6E\x20\x69\x6E\x20\x44\x72\x75\x63\x6B\x71\x75\x61\x6C\x69\x74\xC3\xA4\x74\x20\x73\x6F\x77\x69\x65\x20\x46\x69\x6C\x6D\x65\x20\x75\x6E\x64\x20\x41\x6E\x69\x6D\x61\x74\x69\x6F\x6E\x65\x6E\x20\x7A\x75\x20\x44\x45\x53\x59\x20\x75\x6E\x64\x20\x73\x65\x69\x6E\x65\x6E\x20\x46\x6F\x72\x73\x63\x68\x75\x6E\x67\x73\x62\x65\x72\x65\x69\x63\x68\x65\x6E
+
+
+Text is input via the pico_putTextUtf8 API function which accepts Unicode strings encoded
+in UTF-8. (See Section A.1 for the valid character sets and chapter 7.2 for phonetic input.) 
+
+
+#include <stdio.h>
+#include <wchar.h>
+#include <stdlib.h>
+#include <locale.h>
+ 
+int main(void)
+{
+    /* If your native locale doesn't use UTF-8 encoding 
+     * you need to replace the empty string with a
+     * locale like "en_US.utf8"
+     */
+    char *locale = setlocale(LC_ALL, "");
+    FILE *in = fopen("input.txt", "r");
+ 
+    wint_t c;
+    while ((c = fgetwc(in)) != WEOF)
+        putwchar(c);
+    fclose(in);
+ 
+    return EXIT_SUCCESS;
+}
+
+
+
+https://en.cppreference.com/w/c/locale/setlocale
+
+Unicode->Die Mediendatenbank bietet Ihnen Fotos und Grafiken in Druckqualität sowie Filme und Animationen zu DESY und seinen Forschungsbereichen
+UTF8->
+0x44 0x69 0x65 0x20 0x4D 0x65 0x64 0x69 0x65 0x6E 0x64 0x61 0x74 0x65 0x6E 0x62 0x61 0x6E 0x6B 0x20 0x62 0x69 0x65 0x74 0x65 0x74 0x20 0x49 0x68 0x6E 0x65 0x6E 0x20 0x46 0x6F 0x74 0x6F 0x73 0x20 0x75 0x6E 0x64 0x20 0x47 0x72 0x61 0x66 0x69 0x6B 0x65 0x6E 0x20 0x69 0x6E 0x20 0x44 0x72 0x75 0x63 0x6B 0x71 0x75 0x61 0x6C 0x69 0x74 0xC3 0xA4 0x74 0x20 0x73 0x6F 0x77 0x69 0x65 0x20 0x46 0x69 0x6C 0x6D 0x65 0x20 0x75 0x6E 0x64 0x20 0x41 0x6E 0x69 0x6D 0x61 0x74 0x69 0x6F 0x6E 0x65 0x6E 0x20 0x7A 0x75 0x20 0x44 0x45 0x53 0x59 0x20 0x75 0x6E 0x64 0x20 0x73 0x65 0x69 0x6E 0x65 0x6E 0x20 0x46 0x6F 0x72 0x73 0x63 0x68 0x75 0x6E 0x67 0x73 0x62 0x65 0x72 0x65 0x69 0x63 0x68 0x65 0x6E
+
+
+\x44\x69\x65\x20\x4D\x65\x64\x69\x65\x6E\x64\x61\x74\x65\x6E\x62\x61\x6E\x6B\x20\x62\x69\x65\x74\x65\x74\x20\x49\x68\x6E\x65\x6E\x20\x46\x6F\x74\x6F\x73\x20\x75\x6E\x64\x20\x47\x72\x61\x66\x69\x6B\x65\x6E\x20\x69\x6E\x20\x44\x72\x75\x63\x6B\x71\x75\x61\x6C\x69\x74\xC3\xA4\x74\x20\x73\x6F\x77\x69\x65\x20\x46\x69\x6C\x6D\x65\x20\x75\x6E\x64\x20\x41\x6E\x69\x6D\x61\x74\x69\x6F\x6E\x65\x6E\x20\x7A\x75\x20\x44\x45\x53\x59\x20\x75\x6E\x64\x20\x73\x65\x69\x6E\x65\x6E\x20\x46\x6F\x72\x73\x63\x68\x75\x6E\x67\x73\x62\x65\x72\x65\x69\x63\x68\x65\x6E
+
+
+Text is input via the pico_putTextUtf8 API function which accepts Unicode strings encoded
+in UTF-8. (See Section A.1 for the valid character sets and chapter 7.2 for phonetic input.) 
+
+
+#include <stdio.h>
+#include <wchar.h>
+#include <stdlib.h>
+#include <locale.h>
+ 
+int main(void)
+{
+    /* If your native locale doesn't use UTF-8 encoding 
+     * you need to replace the empty string with a
+     * locale like "en_US.utf8"
+     */
+    char *locale = setlocale(LC_ALL, "");
+    FILE *in = fopen("input.txt", "r");
+ 
+    wint_t c;
+    while ((c = fgetwc(in)) != WEOF)
+        putwchar(c);
+    fclose(in);
+ 
+    return EXIT_SUCCESS;
+}
+
+
+
+s. If you do this, then Cong4Cpp will be able
+to handle characters dened in your locale, such as European accented
+characters or Japanese ideographs. If you neglect to call setlocale(),
+then Cong4Cpp is likely to correctly process only characters in the 7-bit
+US ASCII character set. Figure 2.3 illustrates how to call setlocale(),
+create() and destroy().
+
+
+#include <locale.h>
+#include <config4cpp/Configuration.h>
+using namespace config4cpp;
+...
+setlocale(LC_ALL, "");
+Configuration * cfg = Configuration::create();
+try {
+... // invoke operations on cfg
+} catch(const ConfigurationException & ex) {
+cout << ex.c_str() << endl;
+}
+
+
+
+
+https://stackoverflow.com/questions/1003360/complete-c-i18n-gettext-hello-world-example
