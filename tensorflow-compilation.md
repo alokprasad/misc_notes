@@ -31,5 +31,16 @@ sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 
+*For AWS related issue
+```
+/home/<user_name>/.cache/bazel/_bazel_<user_name>/<hash>/external/aws/BUILD.bazel
+(where <user_name> - user current linux user name,
+<hash> is hash like de4a7858eac0c7de37e543fdc903ef12)
+
+In section (cc_library) in my case line 27 replace:
+"//conditions:default": []"
+with
+"//conditions:default": glob(["aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",]),
+```
 
 
