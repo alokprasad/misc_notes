@@ -23,7 +23,7 @@ https://github.com/tensorflow/serving/issues/832 --> in NVIDIA PX2
 bazel build -c opt --jobs=2 --verbose_failures  --copt="-funsafe-math-optimizations" \
 --copt="-O3" --copt="-ftree-vectorize" --copt="-fomit-frame-pointer" //tensorflow:libtensorflow_cc.so
 
-
+```
 Note:
 Add swap for OOM/Abort errors
 sudo fallocate -l 4G /swapfile
@@ -31,7 +31,8 @@ sudo chmod 600 /swapfile
 sudo mkswap /swapfile
 sudo swapon /swapfile
 
-*For AWS related issue
+* For AWS related issue
+
 ```
 /home/<user_name>/.cache/bazel/_bazel_<user_name>/<hash>/external/aws/BUILD.bazel
 (where <user_name> - user current linux user name,
