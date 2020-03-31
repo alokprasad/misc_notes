@@ -1,0 +1,176 @@
+/mnt/vm1_azure/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/data
+14:59:48alok@/mnt/vm1_azure/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india$ ls *.csv
+cv-valid-indian-all.csv  cv-valid-indian-dev.csv  cv-valid-indian-test.csv  cv-valid-indian-train.csv
+14:59:51alok@/mnt/vm1_azure/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india$ 
+
+--train_files /data/CSVs_and_datasets_deepspeech/cv-valid-train.csv \
+--dev_files /data/CSVs_and_datasets_deepspeech/cv-valid-dev.csv \
+--test_files /data/CSVs_and_datasets_deepspeech/cv-valid-test.csv \
+
+
+--rnnoise_dir /mnt/ds_dataset/rnnoise_contributions/car-people
+
+
+
+--train_files /data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/cv-valid-indian-train.csv \
+--dev_files /data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/cv-valid-indian-dev.csv \
+--test_files /data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/cv-valid-indian-test.csv \
+
+
+
+/data/train176_ckpts_2_DS051_enUS_SVA_CV_IITM_CVIndSVAIndPortPolly_carnoise_2nditeration
+
+
+
+source /data/DeepSpeech/venv/bin/activate
+/data/DeepSpeech_Aug/DeepSpeech
+
+
+
+ sh run_training_en-IN_noiseaug_cv_indian.sh /data/DeepSpeech /data/CSVs_and_datasets_deepspeech/en-US/ /data/train176_ckpts_2_DS051_enUS_SVA_CV_IITM_CVIndSVAIndPortPolly_carnoise_2nditeration
+
+./run_training_DS051_IIT.sh /data/DeepSpeech /data/CSVs_and_datasets_deepspeech/en-US/ /data/train182_ckpts_2_DS051_enUS_SVA_CV_IITM_CVIndSVAIndPortPolly_carnoise_2nditeration_iitm/
+
+
+
+/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/data-mp3
+
+
+
+/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/data
+
+
+/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india/cv-valid-indian-test.csv
+
+
+Running Deepspeech
+===================
+
+/run_training_DS050_ptBR_ckpt12.sh /DeepSpeech/ /docker_files/hdd/brazil/lm/lm_large_v1/ /docker_files/ckpt .
+
+from os import walk
+from os import path
+import subprocess
+import pdb
+import sys
+
+
+FIELDNAMES = ['wav_filename', 'wav_filesize', 'transcript']
+SAMPLE_RATE = 16000
+MAX_SECS = 15
+
+#Assuming sox is installed in command line
+src_folder = sys.argv[1]
+dest_folder = sys.argv[2]
+
+f = []
+for (dirpath, dirnames, filenames) in walk(src_folder):
+        f.extend(filenames)
+#       pdb.set_trace()
+
+for srcfile in f:
+#       pdb.set_trace()
+                if(".mp3" in srcfile):
+                        subprocess.Popen(['sox',src_folder+'/'+srcfile,'-c','1','-r','16000','-b','16',dest_folder+'/'+srcfile.split('.')[0]+'.wav'])
+
+
+
+
+copy bin/import_cv.py and modify 
+
+
+@@ -24,7 +26,7 @@ from util.downloader import maybe_downlo
+ FIELDNAMES = ['wav_filename', 'wav_filesize', 'transcript']
+ SAMPLE_RATE = 16000
+ MAX_SECS = 10
+-ARCHIVE_DIR_NAME = 'cv_corpus_v1'
++ARCHIVE_DIR_NAME = 'data'
+ ARCHIVE_NAME = ARCHIVE_DIR_NAME + '.tar.gz'
+ ARCHIVE_URL = 'https://s3.us-east-2.amazonaws.com/common-voice-data-download/' + ARCHIVE_NAME
+ 
+@@ -32,15 +34,16 @@ def _download_and_preprocess_data(target
+     # Making path absolute
+     target_dir = path.abspath(target_dir)
+     # Conditionally download data
+-    archive_path = maybe_download(ARCHIVE_NAME, target_dir, ARCHIVE_URL)
++    #archive_path = maybe_download(ARCHIVE_NAME, target_dir, ARCHIVE_URL)
+     # Conditionally extract common voice data
+-    _maybe_extract(target_dir, ARCHIVE_DIR_NAME, archive_path)
++    #_maybe_extract(target_dir, ARCHIVE_DIR_NAME, archive_path)
+     # Conditionally convert common voice CSV files and mp3 data to DeepSpeech CSVs and wav
+     _maybe_convert_sets(target_dir, ARCHIVE_DIR_NAME)
+ 
+ def _maybe_extract(target_dir, extracted_data, archive_path):
+     # If target_dir/extracted_data does not exist, extract archive in target_dir
+     extracted_path = path.join(target_dir, extracted_data)
++    print(extracted_path)
+     if not path.exists(extracted_path):
+         print('No directory "%s" - extracting archive...' % extracted_path)
+         with tarfile.open(archive_path) as tar:
+@@ -60,10 +63,11 @@ def _maybe_convert_set(extracted_dir, so
+         return
+     print('No CSV file "%s" - importing "%s"...' % (target_csv, source_csv))
+     samples = []
++    pdb.set_trace()
+     with open(source_csv) as source_csv_file:
+         reader = csv.DictReader(source_csv_file)
+         for row in reader:
+-            samples.append((row['filename'], row['text']))
++            samples.append((os.path.split(row['filename'])[-1], row['text']))
+
+>>
+
+/data/CSVs_and_datasets_deepspeech/en-US//model_export
+
+
+User Directories
+================
+/data/alok
+/data/manmay
+
+CV Corpus Data
+==============
+/data/CSVs_and_datasets_deepspeech/cv_corpus_v1
+
+
+Indian Ascent CV Data
+======================
+/data/CSVs_and_datasets_deepspeech/cv_corpus_v1/cv-india
+
+Running DeepSpeech(Rnnoise dataset Augmentation)
+================================================
+VM1 AZURE
+source /data/DeepSpeech/venv/bin/activate
+
+/data/DeepSpeech_Aug/DeepSpeech -> if you want to augment noise in training otherwise use below model
+/data/DeepSpeech/DeepSpeech
+
+sh run_training_en-IN_noiseaug_cv_indian.sh /data/DeepSpeech /data/CSVs_and_datasets_deepspeech/en-US/ /data/train177_ckpts_2_DS051_enUS_SVA_CV_IITM_CVIndSVAIndPortPolly_carnoise_cv
+
+
+Rnnoise DS augementation is bening committed to branch
+https://git.visteon.com/SmartVoiceAssistant/DeepSpeech/commits/rnnoise_aug_ds05
+
+One trainign is completed ...
+
+
+	se tf.compat.v1.graph_util.extract_sub_graph
+	I Exported model for TF Lite engine as output_graph.tflite
+	I Models exported at /data/CSVs_and_datasets_deepspeech/en-US//model_export
+
+copy to board/target
+/storage/emulated/0/Android/data/com.visteon.sns.app/files/sns/asr/en-US
+
+
+
+Adding Noise Augmentation in CSV
+================================
+dos2unix in csv
+duplicate the content with noise and without noise
+
+
+while IFS= read -r line; do echo "$line,0"; done < cv-valid-indian-dev.csv > cv-valid-indian-dev-mix.csv
+while IFS= read -r line; do echo "$line,1"; done < cv-valid-indian-dev.csv >> cv-valid-indian-dev-mix.csv
+
+
+th
