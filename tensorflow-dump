@@ -1,0 +1,140 @@
+288b1ec05d9a77e4d1e62da2479d240  ./tensorflow/contrib/makefile/downloads/nsync/builds/arm64-v8a.android.c++11/libnsync.a
+2288b1ec05d9a77e4d1e62da2479d240  ./tensorflow/contrib/makefile/downloads/nsync/builds/arm64-v8a.android.c++11/nsync.a
+3f37f0a8478880cb572b90186e6912a0  ./tensorflow/contrib/makefile/downloads/nsync/builds/armeabi-v7a.android.c++11/libnsync.a
+3f37f0a8478880cb572b90186e6912a0  ./tensorflow/contrib/makefile/downloads/nsync/builds/armeabi-v7a.android.c++11/nsync.a
+840fec789e810c4f25f7af4b55488bb2  ./tensorflow/contrib/makefile/gen/lib/android_arm64-v8a/libtensorflow-core.a
+faf50721dab6ef305c8ac4474e543c6e  ./tensorflow/contrib/makefile/gen/protobuf_android/arm64-v8a/lib/libprotobuf.a
+5ff0a162685fcbb29a00b5888c00c5eb  ./tensorflow/contrib/makefile/gen/protobuf_android/arm64-v8a/lib/libprotoc.a
+16b0cb4bb4a8a53fcae2443f83f15541  ./tensorflow/contrib/makefile/gen/protobuf_android/arm64-v8a/lib/libprotobuf-lite.a
+
+
+vim ../target/tensorflow/tensorflow/contrib/makefile/tf_op_files.txt
+
+../target/tensorflow/tensorflow/contrib/makefile/downloads/protobuf/src/google/protobuf/io/gzip_stream.cc
+
+ZLib support
+============
+
+If you want to include GzipInputStream and GzipOutputStream
+(google/protobuf/io/gzip_stream.h) in libprotobuf, you will need to do a few
+additional steps.
+
+Obtain a copy of the zlib library.  The pre-compiled DLL at zlib.net works.
+You need prepare it:
+
+  * Make sure zlib's two headers are in your `C:\Path\to\install\include` path
+  * Make sure zlib's linking libraries (*.lib file) is in your
+    `C:\Path\to\install\lib` library path.
+
+You can also compile it from source by yourself.
+
+Getting sources:
+
+     C:\Path\to>git clone -b v1.2.8 https://github.com/madler/zlib.git
+     C:\Path\to>cd zlib
+
+Compiling and Installing:
+
+     C:\Path\to\zlib>mkdir build & cd build
+     C:\Path\to\zlib\build>mkdir release & cd release
+     C:\Path\to\zlib\build\release>cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ^
+     -DCMAKE_INSTALL_PREFIX=../../../install ../..
+     C:\Path\to\zlib\build\release>nmake & nmake install
+
+You can make *debug* version or use *Visual Studio* generator also as before for the
+protobuf project.
+
+Now add *bin* folder from *install* to system *PATH*:
+
+     C:\Path\to>set PATH=%PATH%;C:\Path\to\install\bin
+
+You need reconfigure protobuf with flag `-Dprotobuf_WITH_ZLIB=ON` when invoking cmake.
+
+Note that if you have compiled ZLIB yourself, as stated above,
+further disable the option `-Dprotobuf_MSVC_STATIC_RUNTIME=OFF`.
+
+If it reports NOTFOUND for zlib_include or zlib_lib, you might haven't put
+the headers or the .lib file in the right directory.
+
+Build and testing protobuf as usual.
+
+
+=====
+
+Another thing to try is to use the -g flag to build_all_ios.sh . This will use print_selective_registration_header to look at your .pb file and output a header file containing all the ops needed to build for your specific graph. This has the added benefit of decreasing the app's binary size.
+
+==
+I have added
+./ops/state_ops.cc
+./kernels/dense_update_ops.cc
+
+to the tensorflow/contrib/makefile/tf_cc_files.txt
+
+===
+This is actually a different error. If you look at tensorflow/contrib/makefile/tf_op_files.txt you'll see a list of the kernel files that are included by default, which doesn't include the tensorflow/core/kernels/cwise_op_inverse.cc which defines the Inv kernel.
+
+ANDROID_TYPES="-D__ANDROID_TYPES_FULL"
+
+===
+In https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/makefile/build_all_ios.sh 
+there ways to use Graph and add only those operation in tensorflow .so/.a file..will be good to speed up and reduce size 
+in low footprint device
+
+
+==
+
+values { list { type: DT_INT32 } } }') for unknown op: MutableDenseHashTableV2
+native : op_kernel.cc:1197 OpKernel ('op: "MutableDenseHashTableV2" device_type: "CPU" constraint { name: "key_dtype" allowed_values { list { type: DT_INT32 } } } constraint { name: "value_dtype" allowed_values { list { type: DT_FLOAT } } }') for unknown op: MutableDenseHashTableV2
+
+--> This tells that you are using Float while this compiled version only support int32 ( may be slim build for android )
+
+Error creating graph: Invalid argument: No OpKernel was registered to support Op 'Assign' with these attrs.  Registered devices: [CPU], Registered kernels:
+  device='CPU'; T in [DT_BOOL]
+  device='CPU'; T in [DT_FLOAT]
+  device='CPU'; T in [DT_INT32]
+
+[[{{node a/Assign}} = Assign[T=DT_STRING, _class=["loc:@a"], use_locking=true, validate_shape=true](a, a/initial_value)]]255|
+
+--> This tells that you are trying to use DT_STRING but registered are only DT_BOOL,DT_FLOAT, DT_INT32
+
+===
+
+bazel-bin/tensorflow/tools/graph_transforms/transform_graph
+
+bazel build tensorflow/python/tools:optimize_for_inference && \
+bazel-bin/tensorflow/python/tools/optimize_for_inference \
+--input=inference_model.pb \
+--output=optimized_inception_graph.pb \
+--frozen_graph=True \
+--input_names=inputs,input_lengths \
+--output_names=model/inference/add
+
+
+
+-
+round_weights(num_steps=256)'
+
+===
+http://old-releases.ubuntu.com/releases/13.04/
+suidsu
+
+
+FastSpeech
+https://arxiv.org/pdf/1905.09263.pdf#Hfootnote.1
+https://speechresearch.github.io/fastspeech/
+Text To Mel , is very fast. Once Paper is 
+
+
+Merlin
+https://drive.google.com/drive/folders/0ByWazFhIkXGaQi1BeVFEeEV3RE0
+
+
+eazhary/dctts2 -- Mel conversion time in single CPU is 12 sec for 12sec Audio
+https://github.com/Edresson/TTS-Conv - DC TTS based, Already Trained for portuguese.
+
+
+https://github.com/npuichigo/ttsflow
+5sec of audio in 12sec, Frontend is missing
+
+
+
